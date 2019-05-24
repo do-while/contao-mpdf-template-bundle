@@ -14,8 +14,8 @@ English Manual see<br>
 
 
 **Version:**<br>
-* 1.0.0 stable - 2018-02-18<br>
-Version für Contao ab Version 4.4 LTS
+* 1.1.0<br>Freigabedatum: 2019-05-24<br>1) Lauffähig in Contao >=4.7, Problematik: TCPDF ist jetzt ein Bundle
+* 1.0.0<br>Freigabedatum: 2018-02-18<br>Version für Contao ab Version 4.4 LTS
 
 
 **Problem melden | Report Problem:**<br>
@@ -24,4 +24,4 @@ https://github.com/do-while/contao-mpdf-template-bundle/issues
 
 
 ___
-Softleister - 2018-02-18
+Softleister - 2019-05-24
