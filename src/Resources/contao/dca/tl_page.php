@@ -9,11 +9,18 @@
  *
  */
 
+use Contao\CoreBundle\DataContainer\PaletteManipulator;
+
 $GLOBALS['TL_DCA']['tl_page']['palettes']['__selector__'][] = 'mpdftemplate';
-$GLOBALS['TL_DCA']['tl_page']['palettes']['root'] = str_replace('{cache_legend', '{pdf_legend:hide},mpdftemplate;{cache_legend', $GLOBALS['TL_DCA']['tl_page']['palettes']['root']);
+
+PaletteManipulator::create()
+    ->addLegend('pdf_legend', 'cache_legend')
+    ->addField('mpdftemplate', 'pdf_legend', PaletteManipulator::POSITION_APPEND)
+    ->applyToPalette('root', 'tl_page')
+;
 
 // add subpalette
-$GLOBALS['TL_DCA']['tl_page']['subpalettes']['mpdftemplate'] = 'pdfTplSRC,pdfMargin,pdfIgnoreCSS';
+$GLOBALS['TL_DCA']['tl_page']['subpalettes']['mpdftemplate'] = 'pdfTplSRC,pdfMargin,pdfIgnoreCSS,pdfCustomCSS';
 
 // add fields
 $GLOBALS['TL_DCA']['tl_page']['fields']['mpdftemplate'] = array
@@ -30,7 +37,7 @@ $GLOBALS['TL_DCA']['tl_page']['fields']['pdfTplSRC'] = array
     'label'                   => &$GLOBALS['TL_LANG']['tl_page']['pdfTplSRC'],
     'exclude'                 => true,
     'inputType'               => 'fileTree',
-    'eval'                    => array('filesOnly'=>true, 'fieldType'=>'radio', 'mandatory'=>true, 'tl_class'=>'clr', 'extensions'=>'pdf'),
+    'eval'                    => array('filesOnly'=>true, 'fieldType'=>'radio', 'tl_class'=>'clr', 'extensions'=>'pdf'),
     'sql'                     => "binary(16) NULL",
 );
 
@@ -49,6 +56,15 @@ $GLOBALS['TL_DCA']['tl_page']['fields']['pdfIgnoreCSS'] = array
     'label'                   => &$GLOBALS['TL_LANG']['tl_page']['pdfIgnoreCSS'],
     'exclude'                 => true,
     'inputType'               => 'checkbox',
-    'eval'                    => array('tl_class'=>'w50 m12'),
+    'eval'                    => array('tl_class'=>'w50 clr'),
     'sql'                     => "char(1) NOT NULL default ''"
+);
+
+$GLOBALS['TL_DCA']['tl_page']['fields']['pdfCustomCSS'] = array
+(
+    'label'                   => &$GLOBALS['TL_LANG']['tl_page']['pdfCustomCSS'],
+    'exclude'                 => true,
+    'inputType'               => 'fileTree',
+    'eval'                    => array('filesOnly'=>true, 'fieldType'=>'checkbox', 'tl_class'=>'clr', 'extensions'=>'css', 'multiple'=>true),
+    'sql'                     => "blob NULL"
 );
