@@ -26,10 +26,6 @@ class mpdf_hookControl extends \Backend
         //-- check conditions for a return --
         if($root_details->mpdftemplate != '1') return;                         // PDF template == OFF
 
-        // get template pdf
-        $root_details->pdfTplSRC = \FilesModel::findByUuid($root_details->pdfTplSRC)->path;
-        if( !file_exists(TL_ROOT . '/' . $root_details->pdfTplSRC) ) return;  // template file not found
-
         // URL decode image paths (see #6411)
         $strArticle = preg_replace_callback('@(src="[^"]+")@', function ($arg) {
             return rawurldecode($arg[0]);
@@ -120,7 +116,13 @@ class mpdf_hookControl extends \Backend
         $pdf = new \Mpdf\Mpdf( $pdfconfig );
 
         $pdf->SetImportUse();                                                                   // Vorbereitung auf Templateseiten
-        $pagecount = $pdf->SetDocTemplate( TL_ROOT . '/' . $root_details->pdfTplSRC, true );    // Set PDF template
+
+        // get template pdf
+        if ($root_details->pdfTplSRC && null !== ($tplFile = \FilesModel::findByUuid($root_details->pdfTplSRC))) {
+            if (file_exists(TL_ROOT . '/' . $tplFile->path)) {
+                $pdf->SetDocTemplate(TL_ROOT . '/' . $tplFile->path, true);    // Set PDF template
+            }
+        }
         
         // Set document information
         $pdf->SetCreator(PDF_CREATOR);
@@ -138,10 +140,26 @@ class mpdf_hookControl extends \Backend
         $pdf->SetFont(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN);
 
         // Include CSS
+        $styles = '';
+
         if( ($root_details->pdfIgnoreCSS != '1') && file_exists(TL_ROOT . '/' . $GLOBALS['TL_CONFIG']['uploadPath'] . '/mpdf.css') ) {
-            $styles = "<style>\n" . $this->css_optimize(file_get_contents(TL_ROOT . '/' . $GLOBALS['TL_CONFIG']['uploadPath'] . '/mpdf.css')) . "\n</style>\n";
-            $strArticle = $styles . $strArticle;
+            $styles .= "<style>\n" . $this->css_optimize(file_get_contents(TL_ROOT . '/' . $GLOBALS['TL_CONFIG']['uploadPath'] . '/mpdf.css')) . "\n</style>\n";
         }
+
+        if ($root_details->pdfCustomCSS) {
+            $cssFiles = \StringUtil::deserialize($root_details->pdfCustomCSS, true);
+            $styles .= "<style>\n";
+
+            foreach ($cssFiles as $cssFileUuid) {
+                if (null !== ($cssFile = \FilesModel::findByUuid($cssFileUuid)) && file_exists(TL_ROOT . '/' . $cssFile->path)) {
+                    $styles .= $this->css_optimize(file_get_contents(TL_ROOT . '/' . $cssFile->path));
+                }
+            }
+
+            $styles .= "\n</style>\n";
+        }
+
+        $strArticle = $styles . $strArticle;
 
         // Write the HTML content
         $pdf->writeHTML( $strArticle );

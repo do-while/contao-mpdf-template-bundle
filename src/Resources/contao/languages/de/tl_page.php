@@ -16,6 +16,7 @@ $GLOBALS['TL_LANG']['tl_page']['mpdftemplate'] = array('PDF-Ausgabe mit PDF-Vorl
 $GLOBALS['TL_LANG']['tl_page']['pdfTplSRC']    = array('PDF-Vorlagedatei', 'Geben Sie eine Vorlagedatei an, die für PDF-Ausgaben verwendet werden soll.');
 $GLOBALS['TL_LANG']['tl_page']['pdfMargin']    = array('Randbereiche', 'Passen Sie die Ränder oben, rechts, unten, links an die Vorlagedatei an.');
 $GLOBALS['TL_LANG']['tl_page']['pdfIgnoreCSS'] = array($GLOBALS['TL_CONFIG']['uploadPath'].'/mpdf.css ignorieren', 'Das mPDF-Stylesheet '.$GLOBALS['TL_CONFIG']['uploadPath'].'/mpdf.css nicht einbinden.');
+$GLOBALS['TL_LANG']['tl_page']['pdfCustomCSS'] = array('Eigenes CSS', 'Die ausgewählten Stylesheets werden bei der PDF Ausgabe inkludiert.');
 
 /**
  * Legends
