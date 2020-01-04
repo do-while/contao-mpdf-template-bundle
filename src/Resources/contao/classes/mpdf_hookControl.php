@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @copyright  Softleister 2018
+ * @copyright  Softleister 2018-2020
  * @author     Softleister <info@softleister.de>
  * @package    mpdf-template
  * @license    LGPL
@@ -115,12 +115,15 @@ class mpdf_hookControl extends \Backend
         // Create new mPDF document
         $pdf = new \Mpdf\Mpdf( $pdfconfig );
 
-        $pdf->SetImportUse();                                                                   // Vorbereitung auf Templateseiten
+        //=== mPDF Versioncheck ===
+        if( method_exists( $pdf, 'SetImportUse' ) ) {               // up to mPDF Version < 8.0 only
+            $pdf->SetImportUse();                                   // Vorbereitung auf Templateseiten
+        }
 
         // get template pdf
         if ($root_details->pdfTplSRC && null !== ($tplFile = \FilesModel::findByUuid($root_details->pdfTplSRC))) {
             if (file_exists(TL_ROOT . '/' . $tplFile->path)) {
-                $pdf->SetDocTemplate(TL_ROOT . '/' . $tplFile->path, true);    // Set PDF template
+                $pdf->SetDocTemplate(TL_ROOT . '/' . $tplFile->path, true);     // . Set PDF template
             }
         }
         
