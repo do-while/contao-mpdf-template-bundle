@@ -167,8 +167,14 @@ class mpdf_hookControl extends \Backend
         // Write the HTML content
         $pdf->writeHTML( $strArticle );
 
+        // file name can get from URL (default is the title of the article)
+        $filename = $objArticle->title;
+        if( !empty( \Input::get('t') ) ) {
+            $filename = \Input::get('t');
+        }
+
         // Close and output PDF document
-		$pdf->Output( \StringUtil::standardize(ampersand($objArticle->title, false)) . '.pdf', \Mpdf\Output\Destination::DOWNLOAD );
+		$pdf->Output( \StringUtil::standardize(ampersand($filename, false)) . '.pdf', \Mpdf\Output\Destination::DOWNLOAD );
 
         // Stop script execution
         exit;
