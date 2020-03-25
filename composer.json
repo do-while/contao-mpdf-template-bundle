@@ -16,8 +16,8 @@
         "source": "https://github.com/do-while/contao-mpdf-template-bundle"
     },
     "require": {
-        "php": ">=5.6.0",
-        "contao/core-bundle": "~4.4",
+        "php": "^7.1",
+        "contao/core-bundle": "~4.9",
         "mpdf/mpdf": "^7.0 || ^8.0"
     },
     "autoload": {
@@ -39,9 +39,6 @@
         "do-while/contao-pdf-template-bundle": "*"
     },
     "extra": {
-        "branch-alias": {
-            "dev-develop": "1.1.x-dev"
-        },
 		"contao-manager-plugin": "Softleister\\MpdftemplateBundle\\ContaoManager\\Plugin"
     }
 }

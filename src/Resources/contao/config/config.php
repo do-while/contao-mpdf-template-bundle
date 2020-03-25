@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @copyright  Softleister 2018
+ * @copyright  Softleister 2020
  * @author     Softleister <info@softleister.de>
  * @package    mpdf-template
  * @license    LGPL
@@ -9,7 +9,7 @@
  *
  */
 
-define('MPDFTEMPLATE_VERSION', '1.0');
+define('MPDFTEMPLATE_VERSION', '1.4');
 define('MPDFTEMPLATE_BUILD'  , '0');
 
 //-------------------------------------------------------------------------

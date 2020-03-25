@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @copyright  Softleister 2018
+ * @copyright  Softleister 2020
  * @author     Softleister <info@softleister.de>
  * @package    mpdf-template
  * @license    LGPL
@@ -17,7 +17,7 @@ PaletteManipulator::create()
     ->addLegend('pdf_legend', 'cache_legend')
     ->addField('mpdftemplate', 'pdf_legend', PaletteManipulator::POSITION_APPEND)
     ->applyToPalette('root', 'tl_page')
-;
+    ->applyToPalette('rootfallback', 'tl_page');
 
 // add subpalette
 $GLOBALS['TL_DCA']['tl_page']['subpalettes']['mpdftemplate'] = 'pdfTplSRC,pdfMargin,pdfIgnoreCSS,pdfCustomCSS';
