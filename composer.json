@@ -18,6 +18,7 @@
     "require": {
         "php": "^7.1 || ^8.0",
         "contao/core-bundle": "~4.9",
+        "contao/tcpdf-bundle": "^1.2",
         "mpdf/mpdf": "^7.0 || ^8.0"
     },
     "autoload": {
