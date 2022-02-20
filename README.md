@@ -14,6 +14,7 @@ English Manual see<br>
 
 
 **Version:**<br>
+* 1.5.0<br>Freigabedatum: 2022-02-20<br>1) Im Artikel können Vorlage und Ränder überschrieben werden<br>2) Freigabe für PHP 8
 * 1.4.0<br>Freigabedatum: 2020-03-25<br>Version für Contao ab Version 4.9 LTS
 * 1.3.0<br>Freigabedatum: 2020-01-21<br>Name des Downloads kann als Get-Parameter `&t=foo` übergeben werden
 * 1.2.0<br>Freigabedatum: 2019-12-23<br>1) PDF-Vorlage optional<br>2) Eigene CSS-Dateien können eingebunden werden
@@ -27,4 +28,4 @@ https://github.com/do-while/contao-mpdf-template-bundle/issues
 
 
 ___
-Softleister - 2020-03-25
+Softleister - 2022-02-20

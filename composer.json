@@ -16,7 +16,7 @@
         "source": "https://github.com/do-while/contao-mpdf-template-bundle"
     },
     "require": {
-        "php": "^7.1",
+        "php": "^7.1 || ^8.0",
         "contao/core-bundle": "~4.9",
         "mpdf/mpdf": "^7.0 || ^8.0"
     },

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @copyright  Softleister 2018-2020
+ * @copyright  Softleister 2018-2022
  * @author     Softleister <info@softleister.de>
  * @package    mpdf-template
  * @license    LGPL
@@ -11,20 +11,47 @@
 
 namespace Softleister\Mpdftemplate;
 
-class mpdf_hookControl extends \Backend
+class mpdf_hookControl extends \Contao\Backend
 {
     //-----------------------------------------------------------------
     // myPrintArticleAsPdf:  create PDF with template file
+    //
+    //  $objArticle->mpdftemplate
+    //  $objArticle->pdfTplSRC
+    //  $objArticle->pdfMargin
     //-----------------------------------------------------------------
     public function myPrintArticleAsPdf( $strArticle, $objArticle )
     {
         global $objPage;
+
         $root_details = $this->Database->prepare("SELECT * FROM tl_page WHERE id=?")
                                        ->limit( 1 )
                                        ->execute( $objPage->rootId );
 
+        $mpdftemplate = $root_details->mpdftemplate;
+        $pdfTplSRC    = $root_details->pdfTplSRC;
+        $pdfMargin    = \Contao\StringUtil::deserialize( $root_details->pdfMargin );
+        if( $pdfMargin['unit'] === 'cm' ) {
+            if( !empty($pdfMargin['bottom']) && is_numeric($pdfMargin['bottom']) ) $pdfMargin['bottom'] *= 10.0;
+            if( !empty($pdfMargin['left'])   && is_numeric($pdfMargin['left']) )   $pdfMargin['left']   *= 10.0;
+            if( !empty($pdfMargin['right'])  && is_numeric($pdfMargin['right']) )  $pdfMargin['right']  *= 10.0;
+            if( !empty($pdfMargin['top'])    && is_numeric($pdfMargin['top']) )    $pdfMargin['top']    *= 10.0;
+        }
+
+        if( $objArticle->mpdftemplate == 1 ) {                                              // IF( Overwrite settings )
+            $mpdftemplate = 1;                                                              //   PDF template = ON
+            if( !empty( $objArticle->pdfTplSRC ) ) $pdfTplSRC = $objArticle->pdfTplSRC;     //   IF( File specified ) Overwrite the UUID
+
+            $margin = \Contao\StringUtil::deserialize( $objArticle->pdfMargin );
+            $factor = $margin['unit'] === 'cm' ? 10.0 : 1.0;
+            if( !empty($margin['bottom']) ) $pdfMargin['bottom'] = $margin['bottom'] * $factor;
+            if( !empty($margin['left']) )   $pdfMargin['left']   = $margin['left']   * $factor;
+            if( !empty($margin['right']) )  $pdfMargin['right']  = $margin['right']  * $factor;
+            if( !empty($margin['top']) )    $pdfMargin['top']    = $margin['top']    * $factor;
+        }
+
         //-- check conditions for a return --
-        if($root_details->mpdftemplate != '1') return;                         // PDF template == OFF
+        if( $mpdftemplate != '1' ) return;                         // PDF template == OFF
 
         // URL decode image paths (see #6411)
         $strArticle = preg_replace_callback('@(src="[^"]+")@', function ($arg) {
@@ -65,13 +92,13 @@ class mpdf_hookControl extends \Backend
 
         // mPDF configuration
         $l['a_meta_dir'] = 'ltr';
-        $l['a_meta_charset'] = \Config::get('characterSet');
+        $l['a_meta_charset'] = \Contao\Config::get('characterSet');
         $l['a_meta_language'] = substr($GLOBALS['TL_LANGUAGE'], 0, 2);
         $l['w_page'] = 'page';
 
 
         //-- Include Settings
-        $tcpdfinit = \Config::get("pdftemplateTcpdf");
+        $tcpdfinit = \Contao\Config::get("pdftemplateTcpdf");
 
         // 1: Own settings addressed via app/config/config.yml
         if( !empty($tcpdfinit) && file_exists(TL_ROOT . '/' . $tcpdfinit) ) {
@@ -94,22 +121,14 @@ class mpdf_hookControl extends \Backend
             require_once(TL_ROOT . '/vendor/do-while/contao-mpdf-template-bundle/src/Resources/contao/config/tcpdf.php');
         }
 
-
-        //-- Calculating dimensions
-        $margins = unserialize($root_details->pdfMargin);                     // Margins as an array
-        switch( $margins['unit'] ) {
-            case 'cm':  $factor = 10.0;     break;
-            default:    $factor = 1.0;
-        }
-
         $pdfconfig = array (
                         'mode'          => 'utf-8',
                         'format'        => PDF_PAGE_FORMAT,
                         'orientation'   => PDF_PAGE_ORIENTATION,
-                        'margin_top'    => !is_numeric($margins['top'])    ? PDF_MARGIN_TOP    : $margins['top'] * $factor,
-                        'margin_right'  => !is_numeric($margins['right'])  ? PDF_MARGIN_RIGHT  : $margins['right'] * $factor,
-                        'margin_bottom' => !is_numeric($margins['bottom']) ? PDF_MARGIN_BOTTOM : $margins['bottom'] * $factor,
-                        'margin_left'   => !is_numeric($margins['left'])   ? PDF_MARGIN_LEFT   : $margins['left'] * $factor,
+                        'margin_top'    => !is_numeric( $pdfMargin['top'] )    ? PDF_MARGIN_TOP    : $pdfMargin['top'],
+                        'margin_right'  => !is_numeric( $pdfMargin['right'] )  ? PDF_MARGIN_RIGHT  : $pdfMargin['right'],
+                        'margin_bottom' => !is_numeric( $pdfMargin['bottom'] ) ? PDF_MARGIN_BOTTOM : $pdfMargin['bottom'],
+                        'margin_left'   => !is_numeric( $pdfMargin['left'] )   ? PDF_MARGIN_LEFT   : $pdfMargin['left'],
                      );                    
                     
         // Create new mPDF document
@@ -121,7 +140,7 @@ class mpdf_hookControl extends \Backend
         }
 
         // get template pdf
-        if ($root_details->pdfTplSRC && null !== ($tplFile = \FilesModel::findByUuid($root_details->pdfTplSRC))) {
+        if( $pdfTplSRC && null !== ($tplFile = \Contao\FilesModel::findByUuid( $pdfTplSRC )) ) {
             if (file_exists(TL_ROOT . '/' . $tplFile->path)) {
                 $pdf->SetDocTemplate(TL_ROOT . '/' . $tplFile->path, true);     // . Set PDF template
             }
@@ -150,11 +169,11 @@ class mpdf_hookControl extends \Backend
         }
 
         if ($root_details->pdfCustomCSS) {
-            $cssFiles = \StringUtil::deserialize($root_details->pdfCustomCSS, true);
+            $cssFiles = \Contao\StringUtil::deserialize($root_details->pdfCustomCSS, true);
             $styles .= "<style>\n";
 
             foreach ($cssFiles as $cssFileUuid) {
-                if (null !== ($cssFile = \FilesModel::findByUuid($cssFileUuid)) && file_exists(TL_ROOT . '/' . $cssFile->path)) {
+                if (null !== ($cssFile = \Contao\FilesModel::findByUuid($cssFileUuid)) && file_exists(TL_ROOT . '/' . $cssFile->path)) {
                     $styles .= $this->css_optimize(file_get_contents(TL_ROOT . '/' . $cssFile->path));
                 }
             }
@@ -169,12 +188,12 @@ class mpdf_hookControl extends \Backend
 
         // file name can get from URL (default is the title of the article)
         $filename = $objArticle->title;
-        if( !empty( \Input::get('t') ) ) {
-            $filename = \Input::get('t');
+        if( !empty( \Contao\Input::get('t') ) ) {
+            $filename = \Contao\Input::get('t');
         }
 
         // Close and output PDF document
-		$pdf->Output( \StringUtil::standardize(ampersand($filename, false)) . '.pdf', \Mpdf\Output\Destination::DOWNLOAD );
+		$pdf->Output( \Contao\StringUtil::standardize(ampersand($filename, false)) . '.pdf', \Mpdf\Output\Destination::DOWNLOAD );
 
         // Stop script execution
         exit;
