@@ -30,8 +30,8 @@ class mpdf_hookControl extends \Contao\Backend
 
         $mpdftemplate = $root_details->mpdftemplate;
         $pdfTplSRC    = $root_details->pdfTplSRC;
-        $pdfMargin    = \Contao\StringUtil::deserialize( $root_details->pdfMargin );
-        if( $pdfMargin['unit'] === 'cm' ) {
+        $pdfMargin    = \Contao\StringUtil::deserialize( $root_details->pdfMargin, true );
+        if( $pdfMargin['unit'] ?? null === 'cm' ) {
             if( !empty($pdfMargin['bottom']) && is_numeric($pdfMargin['bottom']) ) $pdfMargin['bottom'] *= 10.0;
             if( !empty($pdfMargin['left'])   && is_numeric($pdfMargin['left']) )   $pdfMargin['left']   *= 10.0;
             if( !empty($pdfMargin['right'])  && is_numeric($pdfMargin['right']) )  $pdfMargin['right']  *= 10.0;
