@@ -1,0 +1,70 @@
+<?php
+
+/*-----------------------------------------------------------------
+ * AddOn PDF template:  The template is called twice 
+ *                      (during initialization and in the content 
+ *                      area of the 1st page)
+ *
+ * mpdf manual at https://mpdf.github.io/
+ *
+ * $this->pdf       - PDF object for entering additional data
+ * $this->language  - aktuelle Sprache
+ * $this->init      - TRUE = Initialisation, FALSE = Content
+ *
+ * Replaceable Aliases:
+ *----------------------
+ * {PAGENO}     Current page number
+ * {nbpg}       Total number of pages
+ * {DATE d.m.Y} Print date with format specification (PHP date())
+ */
+
+/*-------------------------------------------------------------------
+ *      Call for INITialisations
+ *-----------------------------------------------------------------*/
+if( $this->init ) {
+
+/*--- Example: HTML header / footer ---
+ *
+ *    SetHTMLHeader( 'HTML content' );
+ *    SetHTMLFooter( 'HTML content' );
+ * 
+ * see https://mpdf.github.io/reference/mpdf-functions/sethtmlheader.html
+ */
+
+// $this->pdf->SetHTMLHeader('
+// <table width="100%" class="pdfheader">
+//     <tr>
+//         <td width="33%">{DATE d.m.Y}</td>
+//         <td width="33%" align="center">Page {PAGENO}/{nbpg}</td>
+//         <td width="33%" style="text-align:right;">' . \Controller::replaceInsertTags('{{page::title}}') . '</td>
+//     </tr>
+// </table>');
+
+/*--- Example: Simple header / footer ---
+ *
+ *    SetHeader( 'Plain text' );
+ *    SetFooter( 'Plain text' );
+ *
+ *    You can separate left|middle|right column by '|'
+ * 
+ * see https://mpdf.github.io/reference/mpdf-functions/setheader.html
+ */
+
+// $this->pdf->SetHeader('Text left|Center Text|{PAGENO}');
+// $this->pdf->SetFooter('Name|{PAGENO}|Document Title');
+
+}
+/*-------------------------------------------------------------------
+ *      Call for CONTENT Page 1
+ *-----------------------------------------------------------------*/
+else {
+
+/*--- Example: Insert image ---
+ *
+ * see https://mpdf.github.io/reference/mpdf-functions/image.html
+ */
+
+// $this->pdf->Image( TL_ROOT . '/files/mypath/myimage.png', 10, 20, 42, 0, 'png' );
+
+
+}

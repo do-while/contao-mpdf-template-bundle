@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @copyright  Softleister 2022
+ * @copyright  Softleister 2018-2022
  * @author     Softleister <info@softleister.de>
  * @package    mpdf-template
  * @license    LGPL
@@ -19,7 +19,7 @@ PaletteManipulator::create()
     ->applyToPalette('default', 'tl_article');
 
 // add subpalette
-$GLOBALS['TL_DCA']['tl_article']['subpalettes']['mpdftemplate'] = 'pdfTplSRC,pdfMargin';
+$GLOBALS['TL_DCA']['tl_article']['subpalettes']['mpdftemplate'] = 'pdfTplSRC,pdfMargin,mpdf_addon';
 
 // add fields
 $GLOBALS['TL_DCA']['tl_article']['fields']['mpdftemplate'] = array
@@ -48,4 +48,13 @@ $GLOBALS['TL_DCA']['tl_article']['fields']['pdfMargin'] = array
     'options'                 => array('mm', 'cm'),
     'eval'                    => array('includeBlankOption'=>true, 'tl_class'=>'w50'),
     'sql'                     => "varchar(128) NOT NULL default ''"
+);
+
+$GLOBALS['TL_DCA']['tl_article']['fields']['mpdf_addon'] = array
+(
+    'exclude'                 => true,
+    'inputType'               => 'select',
+    'options_callback'        => array('tl_mpdf_page', 'getPdfTemplates'),
+    'eval'                    => array('chosen'=>true, 'tl_class'=>'clr w50'),
+    'sql'                     => "varchar(64) NOT NULL default ''"
 );

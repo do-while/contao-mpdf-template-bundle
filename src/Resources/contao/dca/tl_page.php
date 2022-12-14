@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @copyright  Softleister 2020
+ * @copyright  Softleister 2018-2022
  * @author     Softleister <info@softleister.de>
  * @package    mpdf-template
  * @license    LGPL
@@ -20,7 +20,7 @@ PaletteManipulator::create()
     ->applyToPalette('rootfallback', 'tl_page');
 
 // add subpalette
-$GLOBALS['TL_DCA']['tl_page']['subpalettes']['mpdftemplate'] = 'pdfTplSRC,pdfMargin,pdfIgnoreCSS,pdfCustomCSS';
+$GLOBALS['TL_DCA']['tl_page']['subpalettes']['mpdftemplate'] = 'pdfTplSRC,pdfMargin,mpdf_addon,pdfIgnoreCSS,pdfCustomCSS';
 
 // add fields
 $GLOBALS['TL_DCA']['tl_page']['fields']['mpdftemplate'] = array
@@ -68,3 +68,26 @@ $GLOBALS['TL_DCA']['tl_page']['fields']['pdfCustomCSS'] = array
     'eval'                    => array('filesOnly'=>true, 'fieldType'=>'checkbox', 'tl_class'=>'clr', 'extensions'=>'css', 'multiple'=>true),
     'sql'                     => "blob NULL"
 );
+
+$GLOBALS['TL_DCA']['tl_page']['fields']['mpdf_addon'] = array
+(
+    'exclude'                 => true,
+    'inputType'               => 'select',
+    'options_callback'        => array('tl_mpdf_page', 'getPdfTemplates'),
+    'eval'                    => array('chosen'=>true, 'tl_class'=>'clr w50'),
+    'sql'                     => "varchar(64) NOT NULL default ''"
+);
+
+
+class tl_mpdf_page extends tl_page
+{
+    /**
+     * Return all PDF-templates as array
+     *
+     * @return array
+     */
+    public function getPdfTemplates( )
+    {
+        return $this->getTemplateGroup( 'mpdf_' );
+    }
+}

@@ -11,7 +11,17 @@
 
 namespace Softleister\Mpdftemplate;
 
-class mpdf_hookControl extends \Contao\Backend
+use Contao\Backend;
+use Contao\StringUtil;
+use Contao\Config;
+use Contao\FilesModel;
+use Contao\BackendTemplate;
+use Contao\Input;
+
+use Mpdf\Mpdf;
+use Mpdf\Output\Destination;
+
+class mpdf_hookControl extends Backend
 {
     //-----------------------------------------------------------------
     // myPrintArticleAsPdf:  create PDF with template file
@@ -30,7 +40,8 @@ class mpdf_hookControl extends \Contao\Backend
 
         $mpdftemplate = $root_details->mpdftemplate;
         $pdfTplSRC    = $root_details->pdfTplSRC;
-        $pdfMargin    = \Contao\StringUtil::deserialize( $root_details->pdfMargin, true );
+        $pdfAddon     = $root_details->mpdf_addon;
+        $pdfMargin    = StringUtil::deserialize( $root_details->pdfMargin, true );
         if( $pdfMargin['unit'] ?? null === 'cm' ) {
             if( !empty($pdfMargin['bottom']) && is_numeric($pdfMargin['bottom']) ) $pdfMargin['bottom'] *= 10.0;
             if( !empty($pdfMargin['left'])   && is_numeric($pdfMargin['left']) )   $pdfMargin['left']   *= 10.0;
@@ -42,7 +53,7 @@ class mpdf_hookControl extends \Contao\Backend
             $mpdftemplate = 1;                                                              //   PDF template = ON
             if( !empty( $objArticle->pdfTplSRC ) ) $pdfTplSRC = $objArticle->pdfTplSRC;     //   IF( File specified ) Overwrite the UUID
 
-            $margin = \Contao\StringUtil::deserialize( $objArticle->pdfMargin );
+            $margin = StringUtil::deserialize( $objArticle->pdfMargin );
             $factor = $margin['unit'] === 'cm' ? 10.0 : 1.0;
             if( !empty($margin['bottom']) ) $pdfMargin['bottom'] = $margin['bottom'] * $factor;
             if( !empty($margin['left']) )   $pdfMargin['left']   = $margin['left']   * $factor;
@@ -92,13 +103,13 @@ class mpdf_hookControl extends \Contao\Backend
 
         // mPDF configuration
         $l['a_meta_dir'] = 'ltr';
-        $l['a_meta_charset'] = \Contao\Config::get('characterSet');
+        $l['a_meta_charset'] = Config::get('characterSet');
         $l['a_meta_language'] = substr($GLOBALS['TL_LANGUAGE'], 0, 2);
         $l['w_page'] = 'page';
 
 
         //-- Include Settings
-        $tcpdfinit = \Contao\Config::get("pdftemplateTcpdf");
+        $tcpdfinit = Config::get("pdftemplateTcpdf");
 
         // 1: Own settings addressed via app/config/config.yml
         if( !empty($tcpdfinit) && file_exists(TL_ROOT . '/' . $tcpdfinit) ) {
@@ -132,7 +143,7 @@ class mpdf_hookControl extends \Contao\Backend
                      );                    
                     
         // Create new mPDF document
-        $pdf = new \Mpdf\Mpdf( $pdfconfig );
+        $pdf = new Mpdf( $pdfconfig );
 
         //=== mPDF Versioncheck ===
         if( method_exists( $pdf, 'SetImportUse' ) ) {               // up to mPDF Version < 8.0 only
@@ -140,7 +151,7 @@ class mpdf_hookControl extends \Contao\Backend
         }
 
         // get template pdf
-        if( $pdfTplSRC && null !== ($tplFile = \Contao\FilesModel::findByUuid( $pdfTplSRC )) ) {
+        if( $pdfTplSRC && null !== ($tplFile = FilesModel::findByUuid( $pdfTplSRC )) ) {
             if (file_exists(TL_ROOT . '/' . $tplFile->path)) {
                 $pdf->SetDocTemplate(TL_ROOT . '/' . $tplFile->path, true);     // . Set PDF template
             }
@@ -155,11 +166,29 @@ class mpdf_hookControl extends \Contao\Backend
 
         $pdf->SetDisplayMode('fullpage', 'continuous');
 
+        // AddOn-Template verarbeiten
+        if( !empty($this->mpdf_addon) ) $pdfAddon = $this->mpdf_addon;      // Addon im Artikel überschreibt das AddOn im Startpunkt
+        $tpl = empty($pdfAddon) ? 'mpdf_default' : $pdfAddon;               // PDF-Template für ergänzende Einträge, wie Header, Footer, ...
+
+        // AddOn-Init
+        $objmPdfTpl = new BackendTemplate( $tpl );
+        $objmPdfTpl->language = $language;
+        $objmPdfTpl->init = true;                                           // INIT-Aufruf
+        $objmPdfTpl->pdf = $pdf;
+        $objmPdfTpl->parse( );                                              // Template verarbeiten
+
         // Initialize document and add a page
         $pdf->AddPage();
 
         // Set font
         $pdf->SetFont(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN);
+
+        // AddOn-Content
+        $objmPdfTpl = new BackendTemplate( $tpl );
+        $objmPdfTpl->language = $language;
+        $objmPdfTpl->init = false;                                          // 2. Aufruf auf Seite 1
+        $objmPdfTpl->pdf = $pdf;
+        $objmPdfTpl->parse( );                                              // Template verarbeiten
 
         // Include CSS
         $styles = '';
@@ -169,11 +198,11 @@ class mpdf_hookControl extends \Contao\Backend
         }
 
         if ($root_details->pdfCustomCSS) {
-            $cssFiles = \Contao\StringUtil::deserialize($root_details->pdfCustomCSS, true);
+            $cssFiles = StringUtil::deserialize($root_details->pdfCustomCSS, true);
             $styles .= "<style>\n";
 
             foreach ($cssFiles as $cssFileUuid) {
-                if (null !== ($cssFile = \Contao\FilesModel::findByUuid($cssFileUuid)) && file_exists(TL_ROOT . '/' . $cssFile->path)) {
+                if (null !== ($cssFile = FilesModel::findByUuid($cssFileUuid)) && file_exists(TL_ROOT . '/' . $cssFile->path)) {
                     $styles .= $this->css_optimize(file_get_contents(TL_ROOT . '/' . $cssFile->path));
                 }
             }
@@ -188,12 +217,12 @@ class mpdf_hookControl extends \Contao\Backend
 
         // file name can get from URL (default is the title of the article)
         $filename = $objArticle->title;
-        if( !empty( \Contao\Input::get('t') ) ) {
-            $filename = \Contao\Input::get('t');
+        if( !empty( Input::get('t') ) ) {
+            $filename = Input::get('t');
         }
 
         // Close and output PDF document
-		$pdf->Output( \Contao\StringUtil::standardize(ampersand($filename, false)) . '.pdf', \Mpdf\Output\Destination::DOWNLOAD );
+		$pdf->Output( StringUtil::standardize(ampersand($filename, false)) . '.pdf', Destination::DOWNLOAD );
 
         // Stop script execution
         exit;

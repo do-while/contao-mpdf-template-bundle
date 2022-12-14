@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @copyright  Softleister 2022
+ * @copyright  Softleister 2018-2022
  * @author     Softleister <info@softleister.de>
  * @package    mpdf-template
  * @license    LGPL
@@ -15,6 +15,7 @@
 $GLOBALS['TL_LANG']['tl_article']['mpdftemplate'] = array('PDF-Ausgabe mit PDF-Vorlage (überschreibt die Einstellung aus dem Startpunkt)', 'PDF-Ausgaben mit Vorlage gestalten, z.B. mit Firmenbriefbogen.');
 $GLOBALS['TL_LANG']['tl_article']['pdfTplSRC']    = array('PDF-Vorlagedatei', 'Geben Sie eine Vorlagedatei an, die für PDF-Ausgaben verwendet werden soll.');
 $GLOBALS['TL_LANG']['tl_article']['pdfMargin']    = array('Randbereiche', 'Passen Sie die Ränder oben, rechts, unten, links an die Vorlagedatei an.');
+$GLOBALS['TL_LANG']['tl_article']['mpdf_addon']   = array('AddOn-Template', 'In diesem Template können zusätzliche Befehle an mpdf übergeben werden.');
 
 /**
  * Legends

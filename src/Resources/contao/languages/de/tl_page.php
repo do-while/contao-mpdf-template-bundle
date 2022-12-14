@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @copyright  Softleister 2018
+ * @copyright  Softleister 2018-2022
  * @author     Softleister <info@softleister.de>
  * @package    mpdf-template
  * @license    LGPL
@@ -17,6 +17,7 @@ $GLOBALS['TL_LANG']['tl_page']['pdfTplSRC']    = array('PDF-Vorlagedatei', 'Gebe
 $GLOBALS['TL_LANG']['tl_page']['pdfMargin']    = array('Randbereiche', 'Passen Sie die Ränder oben, rechts, unten, links an die Vorlagedatei an.');
 $GLOBALS['TL_LANG']['tl_page']['pdfIgnoreCSS'] = array($GLOBALS['TL_CONFIG']['uploadPath'].'/mpdf.css ignorieren', 'Das mPDF-Stylesheet '.$GLOBALS['TL_CONFIG']['uploadPath'].'/mpdf.css nicht einbinden.');
 $GLOBALS['TL_LANG']['tl_page']['pdfCustomCSS'] = array('Eigenes CSS', 'Die ausgewählten Stylesheets werden bei der PDF Ausgabe inkludiert.');
+$GLOBALS['TL_LANG']['tl_page']['mpdf_addon']   = array('AddOn-Template', 'In diesem Template können zusätzliche Befehle an mpdf übergeben werden.');
 
 /**
  * Legends
