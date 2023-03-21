@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @copyright  Softleister 2018-2022
+ * @copyright  Softleister 2018-2023
  * @author     Softleister <info@softleister.de>
  * @package    mpdf-template
  * @license    LGPL
@@ -42,7 +42,8 @@ class mpdf_hookControl extends Backend
         $pdfTplSRC    = $root_details->pdfTplSRC;
         $pdfAddon     = $root_details->mpdf_addon;
         $pdfMargin    = StringUtil::deserialize( $root_details->pdfMargin, true );
-        if( $pdfMargin['unit'] ?? null === 'cm' ) {
+
+        if( ($pdfMargin['unit'] ?? null) === 'cm' ) {
             if( !empty($pdfMargin['bottom']) && is_numeric($pdfMargin['bottom']) ) $pdfMargin['bottom'] *= 10.0;
             if( !empty($pdfMargin['left'])   && is_numeric($pdfMargin['left']) )   $pdfMargin['left']   *= 10.0;
             if( !empty($pdfMargin['right'])  && is_numeric($pdfMargin['right']) )  $pdfMargin['right']  *= 10.0;
