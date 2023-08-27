@@ -105,7 +105,7 @@ class mpdf_hookControl extends Backend
         // mPDF configuration
         $l['a_meta_dir'] = 'ltr';
         $l['a_meta_charset'] = Config::get('characterSet');
-        $l['a_meta_language'] = substr($GLOBALS['TL_LANGUAGE'], 0, 2);
+        $l['a_meta_language'] = $language = substr($GLOBALS['TL_LANGUAGE'], 0, 2);
         $l['w_page'] = 'page';
 
 
