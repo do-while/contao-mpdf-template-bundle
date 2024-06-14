@@ -17,9 +17,12 @@ use Contao\Config;
 use Contao\FilesModel;
 use Contao\BackendTemplate;
 use Contao\Input;
-
 use Mpdf\Mpdf;
 use Mpdf\Output\Destination;
+use Softleister\MpdftemplateBundle\Event\ArticleAsPdfEvent;
+use Softleister\MpdftemplateBundle\Event\BeforeOutputArticleAsPdfEvent;
+use Softleister\MpdftemplateBundle\Event\BeforeWriteArticleAsPdfEvent;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class mpdf_hookControl extends Backend
 {
@@ -87,7 +90,7 @@ class mpdf_hookControl extends Backend
             '@(<div[^>]+block[^>]+>)@',
             '@[\n\r\t]+@',
             '@<br( /)?><div class="mod_article@',
-            '@href="([^"]+)(pdf=[0-9]*(&|&amp;)?)([^"]*)"@'
+            '@href="([^"]+)(pdf=[0-9]*(&|&amp;)?)([^"]*)"@',
         );
 
         $arrReplace = array
@@ -97,7 +100,7 @@ class mpdf_hookControl extends Backend
             '<br>$1',
             ' ',
             '<div class="mod_article',
-            'href="$1$4"'
+            'href="$1$4"',
         );
 
         $strArticle = preg_replace($arrSearch, $arrReplace, $strArticle);
@@ -213,8 +216,12 @@ class mpdf_hookControl extends Backend
 
         $strArticle = $styles . $strArticle;
 
+        // Dispatch an event before writing html
+        $event = new BeforeWriteArticleAsPdfEvent($objArticle, $pdf, $strArticle);
+        $this->dispatchEvent($event);
+
         // Write the HTML content
-        $pdf->writeHTML( $strArticle );
+        $pdf->writeHTML($event->getHtml());
 
         // file name can get from URL (default is the title of the article)
         $filename = $objArticle->title;
@@ -222,8 +229,12 @@ class mpdf_hookControl extends Backend
             $filename = Input::get('t');
         }
 
+        // Dispatch an event before outputting generated pdf
+        $event = new BeforeOutputArticleAsPdfEvent($objArticle, $pdf, $filename);
+        $this->dispatchEvent($event);
+
         // Close and output PDF document
-		$pdf->Output( StringUtil::standardize(ampersand($filename, false)) . '.pdf', Destination::DOWNLOAD );
+        $pdf->Output( StringUtil::standardize(ampersand($event->getFilename(), false)) . '.pdf', Destination::DOWNLOAD );
 
         // Stop script execution
         exit;
@@ -236,6 +247,13 @@ class mpdf_hookControl extends Backend
         $buffer = preg_replace('/\s\s+/', ' ', $buffer);                      // remove multiple spaces
 
         return $buffer;
+    }
+
+    private function dispatchEvent(ArticleAsPdfEvent $event): void
+    {
+        /** @var EventDispatcherInterface $dispatcher */
+        $dispatcher = self::getContainer()->get('event_dispatcher');
+        $dispatcher->dispatch($event);
     }
 
    //-----------------------------------------------------------------
