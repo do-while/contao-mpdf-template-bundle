@@ -21,4 +21,9 @@ final class BeforeOutputArticleAsPdfEvent extends ArticleAsPdfEvent
     {
         return $this->filename;
     }
+
+    public function setFilename(string $filename): void
+    {
+        $this->filename = $filename;
+    }
 }
