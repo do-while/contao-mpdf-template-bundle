@@ -14,6 +14,7 @@ English Manual see<br>
 
 
 **Version:**<br>
+* 1.7.0<br>Freigabedatum: 2024-06-16<br>1) Event-Generation, before writing HTML and before outputting to PDF, Thanks to David<br>2) Set language also in SHYlang for correct CSS hyphens
 * 1.6.0<br>Freigabedatum: 2022-12-14<br>1) AddOn-Template, z.B. für die Einbindung eines Headers/Footers mit Seitenzahlen, Beispiele in mpdf_default.html5
 * 1.5.0<br>Freigabedatum: 2022-02-20<br>1) Im Artikel können Vorlage und Ränder überschrieben werden<br>2) Freigabe für PHP 8
 * 1.4.0<br>Freigabedatum: 2020-03-25<br>Version für Contao ab Version 4.9 LTS
@@ -29,4 +30,4 @@ https://github.com/do-while/contao-mpdf-template-bundle/issues
 
 
 ___
-Softleister - 2022-12-14
+Softleister - 2024-06-16

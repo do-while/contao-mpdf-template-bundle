@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @copyright  Softleister 2018-2023
+ * @copyright  Softleister 2018-2024
  * @author     Softleister <info@softleister.de>
  * @package    mpdf-template
  * @license    LGPL
@@ -17,6 +17,7 @@ use Contao\Config;
 use Contao\FilesModel;
 use Contao\BackendTemplate;
 use Contao\Input;
+
 use Mpdf\Mpdf;
 use Mpdf\Output\Destination;
 use Softleister\MpdftemplateBundle\Event\ArticleAsPdfEvent;
@@ -168,6 +169,9 @@ class mpdf_hookControl extends Backend
         $pdf->SetSubject($objArticle->title);
         $pdf->SetKeywords($objArticle->keywords);
 
+        $pdf->SHYlang = $language;                                          // Sprache für CSS hyphens korrekt setzen
+        $pdf->SHYleftmin = 3;
+
         $pdf->SetDisplayMode('fullpage', 'continuous');
 
         // AddOn-Template verarbeiten
@@ -201,13 +205,13 @@ class mpdf_hookControl extends Backend
             $styles .= "<style>\n" . $this->css_optimize(file_get_contents(TL_ROOT . '/' . $GLOBALS['TL_CONFIG']['uploadPath'] . '/mpdf.css')) . "\n</style>\n";
         }
 
-        if ($root_details->pdfCustomCSS) {
-            $cssFiles = StringUtil::deserialize($root_details->pdfCustomCSS, true);
+        if( $root_details->pdfCustomCSS ) {
+            $cssFiles = StringUtil::deserialize( $root_details->pdfCustomCSS, true );
             $styles .= "<style>\n";
 
-            foreach ($cssFiles as $cssFileUuid) {
-                if (null !== ($cssFile = FilesModel::findByUuid($cssFileUuid)) && file_exists(TL_ROOT . '/' . $cssFile->path)) {
-                    $styles .= $this->css_optimize(file_get_contents(TL_ROOT . '/' . $cssFile->path));
+            foreach( $cssFiles as $cssFileUuid ) {
+                if( null !== ( $cssFile = FilesModel::findByUuid( $cssFileUuid ) ) && file_exists( TL_ROOT . '/' . $cssFile->path ) ) {
+                    $styles .= $this->css_optimize( file_get_contents(TL_ROOT . '/' . $cssFile->path ) );
                 }
             }
 
@@ -217,11 +221,11 @@ class mpdf_hookControl extends Backend
         $strArticle = $styles . $strArticle;
 
         // Dispatch an event before writing html
-        $event = new BeforeWriteArticleAsPdfEvent($objArticle, $pdf, $strArticle);
-        $this->dispatchEvent($event);
+        $event = new BeforeWriteArticleAsPdfEvent( $objArticle, $pdf, $strArticle );
+        $this->dispatchEvent( $event );
 
         // Write the HTML content
-        $pdf->writeHTML($event->getHtml());
+        $pdf->writeHTML( $event->getHtml( ) );
 
         // file name can get from URL (default is the title of the article)
         $filename = $objArticle->title;
@@ -229,12 +233,8 @@ class mpdf_hookControl extends Backend
             $filename = Input::get('t');
         }
 
-        // Dispatch an event before outputting generated pdf
-        $event = new BeforeOutputArticleAsPdfEvent($objArticle, $pdf, $filename);
-        $this->dispatchEvent($event);
-
         // Close and output PDF document
-        $pdf->Output( StringUtil::standardize(ampersand($event->getFilename(), false)) . '.pdf', Destination::DOWNLOAD );
+		$pdf->Output( StringUtil::standardize( ampersand( $filename, false ) ) . '.pdf', Destination::DOWNLOAD );
 
         // Stop script execution
         exit;
@@ -252,8 +252,8 @@ class mpdf_hookControl extends Backend
     private function dispatchEvent(ArticleAsPdfEvent $event): void
     {
         /** @var EventDispatcherInterface $dispatcher */
-        $dispatcher = self::getContainer()->get('event_dispatcher');
-        $dispatcher->dispatch($event);
+        $dispatcher = self::getContainer( )->get( 'event_dispatcher' );
+        $dispatcher->dispatch( $event );
     }
 
    //-----------------------------------------------------------------

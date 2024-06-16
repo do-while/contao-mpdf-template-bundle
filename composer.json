@@ -41,7 +41,7 @@
         "do-while/contao-pdf-template-bundle": "*"
     },
     "extra": {
-		"contao-manager-plugin": "Softleister\\MpdftemplateBundle\\ContaoManager\\Plugin"
+        "contao-manager-plugin": "Softleister\\MpdftemplateBundle\\ContaoManager\\Plugin"
     },
     "config": {
         "allow-plugins": {
