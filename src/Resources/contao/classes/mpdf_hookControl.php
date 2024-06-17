@@ -233,8 +233,12 @@ class mpdf_hookControl extends Backend
             $filename = Input::get('t');
         }
 
+        // Dispatch an event before outputting generated pdf
+        $event = new BeforeOutputArticleAsPdfEvent( $objArticle, $pdf, $filename );
+        $this->dispatchEvent( $event );
+
         // Close and output PDF document
-		$pdf->Output( StringUtil::standardize( ampersand( $filename, false ) ) . '.pdf', Destination::DOWNLOAD );
+        $pdf->Output( StringUtil::standardize( ampersand( $event->getFilename( ), false ) ) . '.pdf', Destination::DOWNLOAD );
 
         // Stop script execution
         exit;
