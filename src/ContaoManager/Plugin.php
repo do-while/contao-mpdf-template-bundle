@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 /**
- * @copyright  Softleister 2018
- * @author     Softleister <info@softleister.de>
+ * @copyright  Softleister 2018-2024
  * @package    mpdf-template
  * @license    LGPL
  * @see	       https://github.com/do-while/contao-mpdf-template-bundle
@@ -11,28 +12,20 @@
 
 namespace Softleister\MpdftemplateBundle\ContaoManager;
 
+use Contao\CoreBundle\ContaoCoreBundle;
+use Softleister\MpdftemplateBundle\MpdftemplateBundle;
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
-//use Symfony\Component\Config\Loader\LoaderResolverInterface;
-//use Symfony\Component\HttpKernel\KernelInterface;
 
 
-/**
- * Plugin for the Contao Manager.
- *
- * @author Softleister
- */
 class Plugin implements BundlePluginInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getBundles( ParserInterface $parser )
     {
         return [
-            BundleConfig::create( 'Softleister\MpdftemplateBundle\SoftleisterMpdftemplateBundle' )
-                ->setLoadAfter( ['Contao\CoreBundle\ContaoCoreBundle'] )
+            BundleConfig::create( MpdftemplateBundle::class )
+                ->setLoadAfter( [ContaoCoreBundle::class] )
                 ->setReplace( ['mPDF'] ),
         ];
     }

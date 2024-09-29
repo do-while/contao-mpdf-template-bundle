@@ -8,7 +8,7 @@
  * mpdf manual at https://mpdf.github.io/
  *
  * $this->pdf       - PDF object for entering additional data
- * $this->language  - aktuelle Sprache
+ * $this->language  - actual language
  * $this->init      - TRUE = Initialisation, FALSE = Content
  *
  * Replaceable Aliases:
@@ -36,7 +36,7 @@ if( $this->init ) {
 //     <tr>
 //         <td width="33%">{DATE d.m.Y}</td>
 //         <td width="33%" align="center">Page {PAGENO}/{nbpg}</td>
-//         <td width="33%" style="text-align:right;">' . \Controller::replaceInsertTags('{{page::title}}') . '</td>
+//         <td width="33%" style="text-align:right;">' . \Contao\System::getContainer()->get('contao.insert_tag.parser')->replaceInline('{{page::title}}') . '</td>
 //     </tr>
 // </table>');
 
@@ -64,7 +64,7 @@ else {
  * see https://mpdf.github.io/reference/mpdf-functions/image.html
  */
 
-// $this->pdf->Image( TL_ROOT . '/files/mypath/myimage.png', 10, 20, 42, 0, 'png' );
+// $this->pdf->Image( System::getContainer()->getParameter('kernel.project_dir') . '/files/mypath/myimage.png', 10, 20, 42, 0, 'png' );
 
 
 }

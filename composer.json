@@ -2,6 +2,7 @@
     "name": "do-while/contao-mpdf-template-bundle",
     "description": "With the mpdf-template extension, a saved pdf file can be activated as a layout template for PDF output. Uses the mPDF library.",
     "keywords": ["contao", "widget", "pdf"],
+    "version": "2.0.6",
     "type": "contao-bundle",
     "homepage": "https://www.softleister.de",
     "license": "LGPL-3.0+",
@@ -16,25 +17,22 @@
         "source": "https://github.com/do-while/contao-mpdf-template-bundle"
     },
     "require": {
-        "php": "^7.4 || ^8.0",
-        "contao/core-bundle": "~4.9",
-        "contao/tcpdf-bundle": "^1.2",
-        "mpdf/mpdf": "^7.0 || ^8.0",
-        "symfony/event-dispatcher-contracts": "^2.0 || ^3.0"
+        "php": "^8.2",
+        "contao/core-bundle": "^5.3",
+        "mpdf/mpdf": "^8.1"
     },
     "autoload": {
         "psr-4": {
             "Softleister\\MpdftemplateBundle\\": "src/"
         },
         "classmap": [
-            "src/Resources/contao/"
+            "contao/"
         ],
         "exclude-from-classmap": [
-            "src/Resources/contao/cache/",
-            "src/Resources/contao/config/",
-            "src/Resources/contao/dca/",
-            "src/Resources/contao/languages/",
-            "src/Resources/contao/templates/"
+            "contao/config/",
+            "contao/dca/",
+            "contao/languages/",
+            "contao/templates/"
         ]
     },
     "conflict": {
@@ -42,11 +40,5 @@
     },
     "extra": {
         "contao-manager-plugin": "Softleister\\MpdftemplateBundle\\ContaoManager\\Plugin"
-    },
-    "config": {
-        "allow-plugins": {
-            "contao-components/installer": true,
-            "php-http/discovery": true
-        }
     }
 }

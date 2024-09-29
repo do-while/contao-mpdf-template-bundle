@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 /**
- * @copyright  Softleister 2018-2022
- * @author     Softleister <info@softleister.de>
+ * @copyright  Softleister 2018-2024
  * @package    mpdf-template
  * @license    LGPL
  * @see	       https://github.com/do-while/contao-mpdf-template-bundle
