@@ -2,7 +2,6 @@
     "name": "do-while/contao-mpdf-template-bundle",
     "description": "With the mpdf-template extension, a saved pdf file can be activated as a layout template for PDF output. Uses the mPDF library.",
     "keywords": ["contao", "widget", "pdf"],
-    "version": "2.0.6",
     "type": "contao-bundle",
     "homepage": "https://www.softleister.de",
     "license": "LGPL-3.0+",
