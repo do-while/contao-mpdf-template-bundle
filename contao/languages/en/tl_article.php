@@ -18,6 +18,9 @@ $GLOBALS['TL_LANG']['tl_article']['pdfTplSRC']    = array('PDF template file', '
 $GLOBALS['TL_LANG']['tl_article']['pdfMargin']    = array('Marginal areas', 'Adjust the margins up, right, bottom and left corresponding to the template file.');
 $GLOBALS['TL_LANG']['tl_article']['mpdf_addon']   = array('AddOn Template', 'In this template additional commands can be passed to mpdf.');
 
+$GLOBALS['TL_LANG']['tl_article']['printAsPdf']   = 'Save article as PDF';
+
+
 /**
  * Legends
  */

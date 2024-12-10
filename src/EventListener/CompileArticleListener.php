@@ -15,12 +15,13 @@ namespace Softleister\MpdftemplateBundle\EventListener;
 
 use Contao\Input;
 use Contao\Module;
+use Contao\System;
 use Contao\StringUtil;
 use Contao\Environment;
 use Contao\FrontendTemplate;
 use Softleister\Mpdftemplate\mpdf_tools;
-use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
 use Symfony\Component\VarDumper\VarDumper;
+use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
 
 #[AsHook('compileArticle')]
 class CompileArticleListener
@@ -28,11 +29,12 @@ class CompileArticleListener
     public function __invoke( FrontendTemplate $template, array $data, Module $module ): void
     {
         $request = Environment::get( 'requestUri' );
+        System::loadLanguageFile('tl_article');
 
         // PrintAsPDF-Button freigeben
         $template->pdfButton = true;
         $template->href = $request . (str_contains($request, '?') ? '&amp;' : '?') . 'pdf=' . $template->id;
-        $template->pdfTitle = StringUtil::specialchars( $GLOBALS['TL_LANG']['MSC']['printAsPdf'] );
+        $template->pdfTitle = StringUtil::specialchars( $GLOBALS['TL_LANG']['tl_article']['printAsPdf'] );
 
         if( (int) Input::get( 'pdf' ) !== $template->id ) return;   // kein PDF-Download angefordert oder falsche ID
         if( empty( $module->printable ) ) return;                   // Keine Syndication gesetzt
