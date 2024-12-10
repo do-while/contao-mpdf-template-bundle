@@ -16,6 +16,7 @@ namespace Softleister\MpdftemplateBundle\EventListener;
 use Contao\Input;
 use Contao\Module;
 use Contao\System;
+use Contao\Controller;
 use Contao\StringUtil;
 use Contao\Environment;
 use Contao\FrontendTemplate;
@@ -27,7 +28,9 @@ class CompileArticleListener
 {
     public function __invoke( FrontendTemplate $template, array $data, Module $module ): void
     {
-        $request = Environment::get( 'requestUri' );
+        $urlParts = parse_url( Environment::get( 'requestUri' ) );
+        $request = isset( $urlParts['path'] ) ? $urlParts['path'] : '';
+
         System::loadLanguageFile('tl_article');
 
         // PrintAsPDF-Button freigeben
@@ -45,6 +48,8 @@ class CompileArticleListener
         $content = '';
         foreach( $template->elements AS $ce_content ) $content .= $ce_content;
 
-        mpdf_tools::printArticleAsPdf( $content, $template );
+        mpdf_tools::printArticleAsPdf( $content, $template );       // Die Funktion startet den Download, wenn sie zurückkommt, ist kein Download erfolgt
+
+        Controller::redirect( $request );                           // wenn kein PDF erstellt: zurück zur aufrufenden Seite
     }
 }
