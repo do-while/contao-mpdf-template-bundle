@@ -25,7 +25,6 @@ use Contao\FrontendTemplate;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Softleister\MpdftemplateBundle\EventListener\BeforeWriteArticleAsPdfEvent;
 use Softleister\MpdftemplateBundle\EventListener\BeforeOutputArticleAsPdfEvent;
-use Symfony\Component\VarDumper\VarDumper;
 
 class mpdf_tools extends Backend
 {
@@ -57,23 +56,31 @@ class mpdf_tools extends Backend
         }
 
         // ggf. Umrechnung in [mm]
-        $factor = $pdfMargin['unit'] === 'cm' ? 10.0 : 1.0;
-        if( !empty( $pdfMargin['bottom'] ) && is_numeric( $pdfMargin['bottom'] ) ) $pdfMargin['bottom'] *= $factor;
-        if( !empty( $pdfMargin['left'] )   && is_numeric( $pdfMargin['left'] ) )   $pdfMargin['left']   *= $factor;
-        if( !empty( $pdfMargin['right'] )  && is_numeric( $pdfMargin['right'] ) )  $pdfMargin['right']  *= $factor;
-        if( !empty( $pdfMargin['top'] )    && is_numeric( $pdfMargin['top'] ) )    $pdfMargin['top']    *= $factor;
+        $factor = 1.0;
+        if( isset( $pdfMargin['unit'] ) ) {
+            if( $pdfMargin['unit'] === 'cm' ) $factor = 10.0;
+            if( !empty( $pdfMargin['bottom'] ) && is_numeric( $pdfMargin['bottom'] ) ) $pdfMargin['bottom'] *= $factor;
+            if( !empty( $pdfMargin['left'] )   && is_numeric( $pdfMargin['left'] ) )   $pdfMargin['left']   *= $factor;
+            if( !empty( $pdfMargin['right'] )  && is_numeric( $pdfMargin['right'] ) )  $pdfMargin['right']  *= $factor;
+            if( !empty( $pdfMargin['top'] )    && is_numeric( $pdfMargin['top'] ) )    $pdfMargin['top']    *= $factor;
+        }
+        else {  // kein Eintrag in der Root-Page
+            $pdfMargin = ['bottom' => '0', 'left' => '0', 'right' => '0', 'top' => '0', 'unit' => 'mm'];
+        }
 
         if( $template->mpdftemplate ) {                                                     // IF( Overwrite settings in article )
             $mpdftemplate = true;                                                           //   PDF template = ON
             if( !empty( $template->pdfTplSRC ) ) $pdfTplSRC = $template->pdfTplSRC;         //   IF( File specified ) Overwrite the UUID
 
-            $margin = StringUtil::deserialize( $template->pdfMargin );
-            $factor = $margin['unit'] === 'cm' ? 10.0 : 1.0;
-            if( !empty( $margin['bottom'] ) && is_numeric( $margin['bottom'] ) ) $pdfMargin['bottom'] = $margin['bottom'] * $factor;
-            if( !empty( $margin['left'] )   && is_numeric( $margin['left'] ) )   $pdfMargin['left']   = $margin['left']   * $factor;
-            if( !empty( $margin['right'] )  && is_numeric( $margin['right'] ) )  $pdfMargin['right']  = $margin['right']  * $factor;
-            if( !empty( $margin['top'] )    && is_numeric( $margin['top'] ) )    $pdfMargin['top']    = $margin['top']    * $factor;
-
+            $factor = 1.0;
+            $margin = StringUtil::deserialize( $template->pdfMargin, true );
+            if( isset( $margin['unit'] ) ) {
+                $factor = $margin['unit'] === 'cm' ? 10.0 : 1.0;
+                if( !empty( $margin['bottom'] ) && is_numeric( $margin['bottom'] ) ) $pdfMargin['bottom'] = $margin['bottom'] * $factor;
+                if( !empty( $margin['left'] )   && is_numeric( $margin['left'] ) )   $pdfMargin['left']   = $margin['left']   * $factor;
+                if( !empty( $margin['right'] )  && is_numeric( $margin['right'] ) )  $pdfMargin['right']  = $margin['right']  * $factor;
+                if( !empty( $margin['top'] )    && is_numeric( $margin['top'] ) )    $pdfMargin['top']    = $margin['top']    * $factor;
+            }
             // AddOn-Template verarbeiten
             if( !empty( $template->mpdf_addon ) ) $pdfAddon = $template->mpdf_addon;        // Addon im Artikel überschreibt das AddOn im Startpunkt
         }
