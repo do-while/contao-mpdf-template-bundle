@@ -20,7 +20,6 @@ use Contao\StringUtil;
 use Contao\Environment;
 use Contao\FrontendTemplate;
 use Softleister\Mpdftemplate\mpdf_tools;
-use Symfony\Component\VarDumper\VarDumper;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
 
 #[AsHook('compileArticle')]
