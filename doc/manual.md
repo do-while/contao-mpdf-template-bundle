@@ -15,6 +15,17 @@ Simply install the extension with the **Contao Manager** or on the command line 
 
 
 
+### Contao Demo
+In the Contao demo, the syndication icons are replaced by CSS, but no thought has been given to a PDF button. As a result, the PDF icon is no longer visible.
+As a **workaround** please enter an additional style in your CSS:
+```
+.syndication .pdf:before {
+  background: url('assets/contao/images/iconPDF.svg') no-repeat;
+  background-size: contain;
+}
+```
+
+
 ### Settings
 The settings are made in the ‘Website root’ and apply to all pages below this starting point. This makes it possible to use different PDF layouts depending on the language or domain. Depending on the layout, the margins of the text output can be set so that the header or footer area of the template is not overwritten by the article content.
 
@@ -35,6 +46,6 @@ You may have to try out the CSS instructions, as not all nuances are supported b
 
 
 ___
-Softleister - 2024-09-29
+Softleister - 2024-12-12
 
 The extension is based on the mPDF module, see (https://github.com/mpdf/mpdf)

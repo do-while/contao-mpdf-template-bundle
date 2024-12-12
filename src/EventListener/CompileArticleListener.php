@@ -28,21 +28,22 @@ class CompileArticleListener
 {
     public function __invoke( FrontendTemplate $template, array $data, Module $module ): void
     {
+        $template->pdfButton = false;
         $urlParts = parse_url( Environment::get( 'requestUri' ) );
         $request = isset( $urlParts['path'] ) ? $urlParts['path'] : '';
+        $arrSyn = StringUtil::deserialize( $module->printable, true );
 
         System::loadLanguageFile('tl_article');
 
         // PrintAsPDF-Button freigeben
-        $template->pdfButton = true;
-        $template->href = $request . (str_contains($request, '?') ? '&amp;' : '?') . 'pdf=' . $template->id;
-        $template->pdfTitle = StringUtil::specialchars( $GLOBALS['TL_LANG']['tl_article']['printAsPdf'] );
+        if( in_array( 'pdf', $arrSyn ) ) {
+            $template->pdfButton = true;
+            $template->href = $request . (str_contains($request, '?') ? '&amp;' : '?') . 'pdf=' . $template->id;
+            $template->pdfTitle = StringUtil::specialchars( $GLOBALS['TL_LANG']['tl_article']['printAsPdf'] );
+        }
+        else return;                                                // Syndication ohne PDF => Controller beenden
 
         if( (int) Input::get( 'pdf' ) !== $template->id ) return;   // kein PDF-Download angefordert oder falsche ID
-        if( empty( $module->printable ) ) return;                   // Keine Syndication gesetzt
-
-        $arrSyn = StringUtil::deserialize( $module->printable, true );
-        if( !in_array( 'pdf', $arrSyn ) ) return;                   // kein PrintAsPdf gesetzt
 
         // Inhalte der Content-Elemente anreihen
         $content = '';

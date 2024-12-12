@@ -19,6 +19,7 @@ $GLOBALS['TL_LANG']['tl_article']['pdfMargin']    = array('Marginal areas', 'Adj
 $GLOBALS['TL_LANG']['tl_article']['mpdf_addon']   = array('AddOn Template', 'In this template additional commands can be passed to mpdf.');
 
 $GLOBALS['TL_LANG']['tl_article']['printAsPdf']   = 'Save article as PDF';
+$GLOBALS['TL_LANG']['tl_article']['pdf']          = 'Save article as PDF';
 
 
 /**

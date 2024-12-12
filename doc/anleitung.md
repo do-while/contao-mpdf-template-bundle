@@ -14,6 +14,16 @@ Installieren Sie die Erweiterung einfach mit dem **Contao Manager** oder auf der
 `composer require do-while/contao-mpdf-template-bundle`
 
 
+### Contao Demo
+In der Contao Demo werden die Syndication-Icons per CSS ersetzt, an einen PDF-Button hat man dabei nicht gedacht. Dadurch ist auch der PDF-Icon nicht mehr sichtbar.
+Als **Workaround** tragen Sie bitte einen zusätzlichen Style in Ihr CSS ein:
+```
+.syndication .pdf:before {
+  background: url('assets/contao/images/iconPDF.svg') no-repeat;
+  background-size: contain;
+}
+```
+
 
 ### Einstellungen
 Die Vorgaben werden in dem "Startpunkt einer Webseite" gemacht und gelten auf allen Seiten unterhalb dieses Startpunkts. So ist es möglich sprachen- oder domainabhängig verschiedene PDF-Layouts zu verwenden. Abhängig vom Layout können die Ränder der Textausgabe eingestellt werden, damit nicht Kopf- oder Fußbereich der Vorlage von dem Artikelinhalt überschrieben werden.
@@ -33,6 +43,6 @@ Mit den CSS-Anweisungen muss man ggf. probieren, da nicht alle Feinheiten von mP
 
 
 ___
-Softleister - 2024-09-29
+Softleister - 2024-12-12
 
 Die Erweiterung basiert auf dem Modul mPDF, siehe (https://github.com/mpdf/mpdf)

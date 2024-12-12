@@ -1,0 +1,25 @@
+{% extends "@Contao/mod_article" %}
+
+{% block syndication %}
+  {{ parent() }}
+  
+  {#  These styles are necessary for Contao Demo: please remove comment lines 6 and 13.
+  <style>
+    .syndication .pdf:before {
+      background: url('assets/contao/images/iconPDF.svg') no-repeat;
+      background-size: contain;
+    }
+  </style>
+  #}
+
+  <!-- indexer::stop -->
+  <div class="syndication">
+    {% if pdfButton %}
+      <a href="{{ href }}" class="pdf" title="{{ pdfTitle }}" data-skip-search-index>
+        <img src="/assets/contao/images/pdf.svg" width="20" height="20" alt="">
+      </a>
+    {% endif %}
+  </div>
+  <!-- indexer::continue -->
+
+{% endblock %}

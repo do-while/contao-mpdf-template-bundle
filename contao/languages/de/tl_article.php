@@ -19,6 +19,7 @@ $GLOBALS['TL_LANG']['tl_article']['pdfMargin']    = array('Randbereiche', 'Passe
 $GLOBALS['TL_LANG']['tl_article']['mpdf_addon']   = array('AddOn-Template', 'In diesem Template können zusätzliche Befehle an mpdf übergeben werden.');
 
 $GLOBALS['TL_LANG']['tl_article']['printAsPdf']   = 'Artikel als PDF speichern';
+$GLOBALS['TL_LANG']['tl_article']['pdf']          = 'Artikel als PDF speichern';
 
 
 /**
