@@ -30,4 +30,4 @@ https://github.com/do-while/contao-mpdf-template-bundle/issues
 
 
 ___
-Softleister - 2024-09-29
+Softleister - 2026-01-26
