@@ -30,7 +30,13 @@ class CompileArticleListener
     {
         $template->pdfButton = false;
         $urlParts = parse_url( Environment::get( 'requestUri' ) );
-        $request = isset( $urlParts['path'] ) ? $urlParts['path'] : '';
+
+        $path  = $urlParts['path'] ?? '';
+        $query = $urlParts['query'] ?? '';
+        $params = [];                                               // Vorhandene GET-Parameter übernehmen
+        if( $query !== '' ) {
+            parse_str( $query, $params );
+        }
         $arrSyn = StringUtil::deserialize( $module->printable, true );
 
         System::loadLanguageFile('tl_article');
@@ -38,7 +44,9 @@ class CompileArticleListener
         // PrintAsPDF-Button freigeben
         if( in_array( 'pdf', $arrSyn ) ) {
             $template->pdfButton = true;
-            $template->href = $request . (str_contains($request, '?') ? '&amp;' : '?') . 'pdf=' . $template->id;
+            $params['pdf'] = $template->id;
+
+            $template->href = $path . '?' . StringUtil::ampersand( http_build_query( $params ) );
             $template->pdfTitle = StringUtil::specialchars( $GLOBALS['TL_LANG']['tl_article']['printAsPdf'] );
         }
         else return;                                                // Syndication ohne PDF => Controller beenden
@@ -51,6 +59,9 @@ class CompileArticleListener
 
         mpdf_tools::printArticleAsPdf( $content, $template );       // Die Funktion startet den Download, wenn sie zurückkommt, ist kein Download erfolgt
 
-        Controller::redirect( $request );                           // wenn kein PDF erstellt: zurück zur aufrufenden Seite
+        unset( $params['pdf'] );
+        $redirectUrl = $path . ( empty( $params ) ? '' : '?' . http_build_query( $params ) );
+
+        Controller::redirect( $redirectUrl );                       // wenn kein PDF erstellt: zurück zur aufrufenden Seite
     }
 }
