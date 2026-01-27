@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * @copyright  Softleister 2018-2024
+ * @copyright  Softleister 2018-2026
  * @author     Softleister <info@softleister.de>
  * @package    mpdf-template
  * @license    LGPL
