@@ -18,6 +18,7 @@ use Contao\System;
 use Contao\Backend;
 
 use Contao\Database;
+use Contao\CoreBundle\Controller\ImagesController;
 use Contao\FilesModel;
 use Contao\StringUtil;
 use Contao\BackendTemplate;
@@ -123,6 +124,9 @@ class mpdf_tools extends Backend
 
         $strArticle = preg_replace( $arrSearch, $arrReplace, $strArticle );
 
+        // Images have to exist as local files, mPDF cannot load them from the (not yet created) Contao 5 image URLs
+        $strArticle = self::localizeImages( $strArticle );
+
         //-- Include Settings
         require_once( $rootDir . '/vendor/do-while/contao-mpdf-template-bundle/contao/config/mpdf.php' );
 
@@ -218,6 +222,39 @@ class mpdf_tools extends Backend
         $pdf->Output( StringUtil::standardize( StringUtil::ampersand( $event->getFilename( ), false ) ) . '.pdf', 'D' );
 
         exit;
+    }
+
+    //-----------------------------------------------------------------
+    // localizeImages:  Contao 5 creates resized images on the first request only, and the HTML contains root
+    //                  relative URLs ("/assets/images/..."). mPDF would load them over HTTP(S), which fails for
+    //                  images that do not exist yet or hosts with a self-signed certificate.
+    //                  => create the missing images and use the local file paths
+    //-----------------------------------------------------------------
+    private static function localizeImages( string $html ): string
+    {
+        $container = System::getContainer( );
+        $webDir    = $container->getParameter( 'contao.web_dir' );
+        $imageDir  = $container->getParameter( 'contao.image.target_dir' );
+
+        return preg_replace_callback( '@\bsrc="(/(?!/)[^"]*)"@i', function( array $match ) use ( $container, $webDir, $imageDir ) {
+            $path = rawurldecode( (string) parse_url( $match[1], PHP_URL_PATH ) );
+
+            if( str_contains( $path, '..' ) ) return $match[0];
+
+            $file = $webDir . $path;
+
+            if( !is_file( $file ) && str_starts_with( $file, $imageDir . '/' ) ) {
+                try {
+                    // The images controller resizes deferred images when it is called
+                    $container->get( ImagesController::class )( substr( $file, strlen( $imageDir ) + 1 ) );
+                }
+                catch( \Throwable ) {
+                    // leave the image out like before, a missing image must not break the PDF
+                }
+            }
+
+            return is_file( $file ) ? 'src="' . $file . '"' : $match[0];
+        }, $html ) ?? $html;
     }
 
     private static function css_optimize( $buffer )
