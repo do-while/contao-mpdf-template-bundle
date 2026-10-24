@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * @copyright  Softleister 2018-2024
+ * @copyright  Softleister 2018-2026
  * @package    mpdf-template
  * @license    LGPL
  * @see	       https://github.com/do-while/contao-mpdf-template-bundle

@@ -19,7 +19,7 @@ In der Contao Demo werden die Syndication-Icons per CSS ersetzt, an einen PDF-Bu
 Als **Workaround** tragen Sie bitte einen zusätzlichen Style in Ihr CSS ein:
 ```
 .syndication .pdf:before {
-  background: url('assets/contao/images/iconPDF.svg') no-repeat;
+  background: url('/bundles/mpdftemplate/pdf.svg') no-repeat;
   background-size: contain;
 }
 ```
@@ -43,6 +43,6 @@ Mit den CSS-Anweisungen muss man ggf. probieren, da nicht alle Feinheiten von mP
 
 
 ___
-Softleister - 2024-12-12
+Softleister - 2026-10-24
 
 Die Erweiterung basiert auf dem Modul mPDF, siehe (https://github.com/mpdf/mpdf)

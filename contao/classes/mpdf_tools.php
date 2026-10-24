@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * @copyright  Softleister 2018-2024
+ * @copyright  Softleister 2018-2026
  * @package    mpdf-template
  * @license    LGPL
  * @see	       https://github.com/do-while/contao-mpdf-template-bundle
@@ -24,6 +24,7 @@ use Contao\StringUtil;
 use Contao\BackendTemplate;
 use Contao\FrontendTemplate;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Softleister\MpdftemplateBundle\EventListener\ArticleAsPdfEvent;
 use Softleister\MpdftemplateBundle\EventListener\BeforeWriteArticleAsPdfEvent;
 use Softleister\MpdftemplateBundle\EventListener\BeforeOutputArticleAsPdfEvent;
 
@@ -95,10 +96,6 @@ class mpdf_tools extends Backend
         // Handle line breaks in preformatted text
         $strArticle = preg_replace_callback( '@(<pre.*</pre>)@Us', function ($arg) { return str_replace( "\n", '<br>', $arg[0] ); }, $strArticle );
 
-        $strArticle = str_replace( array(chr(0xC2).chr(0xA0), chr(0xC2).chr(0xA9), chr(0xC2).chr(0xAE), chr(0xC2).chr(0xB0), chr(0xC3).chr(0x84), chr(0xC3).chr(0x96), chr(0xC2).chr(0x9C), chr(0xC3).chr(0xA4), chr(0xC3).chr(0xB6), chr(0xC3).chr(0xBC), chr(0xC3).chr(0x9F) ),
-                                   array(' ', '©', '®', '°', 'Ä', 'Ö', 'Ü', 'ä', 'ö', 'ü', 'ß'),
-                                   $strArticle );
-
         // Default PDF export using TCPDF
         $arrSearch = [
             '@<form.*</form>@Us',
@@ -128,7 +125,7 @@ class mpdf_tools extends Backend
         $strArticle = self::localizeImages( $strArticle );
 
         //-- Include Settings
-        require_once( $rootDir . '/vendor/do-while/contao-mpdf-template-bundle/contao/config/mpdf.php' );
+        require_once( __DIR__ . '/../config/mpdf.php' );
 
         // mPDF configuration
         $pdfconfig = array (
@@ -186,13 +183,13 @@ class mpdf_tools extends Backend
 
         // Include one or more CSS files from file system
         $styles = '';
-        if( $objRootPage->pdfCustomCSS ) {
+        if( ( $objRootPage->numRows > 0 ) && $objRootPage->pdfCustomCSS ) {
             $cssFiles = StringUtil::deserialize( $objRootPage->pdfCustomCSS, true );
             $styles .= "<style>\n";
 
             foreach( $cssFiles as $cssFileUuid ) {
                 if( null !== ( $cssFile = FilesModel::findByUuid( $cssFileUuid ) ) && file_exists( $rootDir . '/' . $cssFile->path ) ) {
-                    $styles .= self::css_optimize( file_get_contents( $rootDir . '/' . $cssFile->path ) );
+                    $styles .= self::css_optimize( (string) file_get_contents( $rootDir . '/' . $cssFile->path ) );
                 }
             }
             $styles .= "\n</style>\n";
@@ -257,7 +254,7 @@ class mpdf_tools extends Backend
         }, $html ) ?? $html;
     }
 
-    private static function css_optimize( $buffer )
+    private static function css_optimize( string $buffer ): string
     {
         $buffer = preg_replace( '!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer ); // remove comments
         $buffer = str_replace( ["\r\n", "\r", "\n", "\t"], '', $buffer );       // remove tabs, newlines, etc.
@@ -266,7 +263,7 @@ class mpdf_tools extends Backend
         return $buffer;
     }
 
-    private static function dispatchEvent( $event ): void
+    private static function dispatchEvent( ArticleAsPdfEvent $event ): void
     {
         /** @var EventDispatcherInterface $dispatcher */
         $dispatcher = self::getContainer( )->get( 'event_dispatcher' );

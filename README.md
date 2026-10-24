@@ -13,6 +13,7 @@ English Manual see<br>
 
 
 **Version:**<br>
+* 2.1.0<br>Freigabedatum: 2026-10-24<br>1) Bilder im Artikel-PDF: fehlende Contao-5-Bilder werden erzeugt und lokal eingebunden (Pull-Request von zonky2)<br>2) PDF-Icon wird im Bundle mitgeliefert (public/pdf.svg)<br>3) Kleinere Korrekturen
 * 2.0.0<br>Freigabedatum: 2024-09-29<br>Version für Contao ab Version 5.3 LTS
 * 1.7.0<br>Freigabedatum: 2024-06-16<br>1) Event-Generation, before writing HTML and before outputting to PDF, Thanks to David<br>2) Set language also in SHYlang for correct CSS hyphens
 * 1.6.0<br>Freigabedatum: 2022-12-14<br>1) AddOn-Template, z.B. für die Einbindung eines Headers/Footers mit Seitenzahlen, Beispiele in mpdf_default.html5
@@ -30,4 +31,4 @@ https://github.com/do-while/contao-mpdf-template-bundle/issues
 
 
 ___
-Softleister - 2026-01-26
+Softleister - 2026-10-24

@@ -20,7 +20,7 @@ In the Contao demo, the syndication icons are replaced by CSS, but no thought ha
 As a **workaround** please enter an additional style in your CSS:
 ```
 .syndication .pdf:before {
-  background: url('assets/contao/images/iconPDF.svg') no-repeat;
+  background: url('/bundles/mpdftemplate/pdf.svg') no-repeat;
   background-size: contain;
 }
 ```
@@ -46,6 +46,6 @@ You may have to try out the CSS instructions, as not all nuances are supported b
 
 
 ___
-Softleister - 2024-12-12
+Softleister - 2026-10-24
 
 The extension is based on the mPDF module, see (https://github.com/mpdf/mpdf)
